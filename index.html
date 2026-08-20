@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Feldzahlstelle zur Erfassung und Freigabe von Auszahlungsanfragen."
+    />
+    <title>Feldzahlstelle | Auszahlungssystem</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="topographic" aria-hidden="true"></div>
+    <main class="app-shell">
+      <header class="command-bar">
+        <a class="brand" href="#" aria-label="Feldzahlstelle Startseite">
+          <span class="brand-mark" aria-hidden="true">
+            <i data-lucide="landmark"></i>
+          </span>
+          <span>
+            <strong>FELDZAHLSTELLE</strong>
+            <small>Auszahlungskoordination</small>
+          </span>
+        </a>
+
+        <div class="command-meta">
+          <span class="status-chip">
+            <span class="status-dot"></span>
+            SYSTEM BEREIT
+          </span>
+          <time id="current-date" class="date-stamp"></time>
+          <button class="gota-trigger" id="gota-trigger" type="button">
+            <i data-lucide="shield" aria-hidden="true"></i>
+            <span>GOTA-ZUGANG</span>
+          </button>
+        </div>
+      </header>
+
+      <section class="workspace" aria-label="Auszahlungssteuerung">
+        <aside class="sidebar">
+          <div class="sector-label">LAGE</div>
+          <nav aria-label="Hauptnavigation">
+            <a class="nav-item active" href="#erfassung">
+              <i data-lucide="file-pen-line" aria-hidden="true"></i>
+              <span>Erfassung</span>
+            </a>
+            <a class="nav-item" href="#vorgaenge">
+              <i data-lucide="list-tree" aria-hidden="true"></i>
+              <span>Vorgaenge</span>
+              <strong id="sidebar-count">0</strong>
+            </a>
+          </nav>
+
+          <div class="security-panel">
+            <i data-lucide="lock-keyhole" aria-hidden="true"></i>
+            <div>
+              <strong id="security-state">GOTA GESPERRT</strong>
+              <span id="security-copy">Freigaben nicht verfuegbar</span>
+            </div>
+          </div>
+
+          <div class="sidebar-footer">
+            <span id="data-source-state">DATENBLATT: LADE</span>
+            <span id="data-source-copy">SHEET / NUR LESEN</span>
+            <span id="database-state">DATENBANK: PRUEFE</span>
+            <span id="session-id">SITZUNG --</span>
+          </div>
+        </aside>
+
+        <div class="main-stage">
+          <section class="briefing" aria-labelledby="page-title">
+            <div>
+              <p class="eyebrow">Sektor 04 / Zahlungsstelle</p>
+              <h1 id="page-title">Auszahlung anfordern</h1>
+              <p class="briefing-copy">
+                Jeder kann einen Vorgang erfassen. Die endgueltige Pruefung und Freigabe erfolgt ausschliesslich im geschuetzten GOTA-Bereich.
+              </p>
+            </div>
+            <div class="briefing-id">
+              <span>VORGANGSREIHE</span>
+              <strong>FZ-2026</strong>
+            </div>
+          </section>
+
+          <section class="content-grid" id="erfassung">
+            <article class="request-panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="panel-kicker">OFFENE MELDUNG</p>
+                  <h2>Neue Auszahlungsanforderung</h2>
+                </div>
+                <span class="open-badge">OHNE ANMELDUNG</span>
+              </div>
+
+              <form id="request-form" novalidate>
+                <div class="form-grid">
+                  <fieldset class="passport-field full-width">
+                    <legend>Empfaenger / Reisepassnummern</legend>
+                    <div class="token-input" id="recipient-token-input">
+                      <div class="token-list" id="recipient-list" aria-live="polite"></div>
+                      <input id="recipient-input" type="text" maxlength="220" autocomplete="off" inputmode="text" placeholder="z. B. 50173, 10, 166713" aria-describedby="recipient-hint" />
+                    </div>
+                    <small class="field-hint" id="recipient-hint">Mit Komma, Semikolon oder Enter trennen.</small>
+                  </fieldset>
+                  <label>
+                    Auszahlungsart <span class="field-source">Spalte A / B</span>
+                    <select id="payment-type" name="paymentType" required disabled>
+                      <option value="">Datenblatt wird geladen</option>
+                    </select>
+                  </label>
+                  <fieldset class="reference-field">
+                    <legend>Referenz</legend>
+                    <div class="reference-options" id="reference-options">
+                      <label class="reference-option">
+                        <input type="checkbox" name="reference" value="Teilnahme" />
+                        <span>Teilnahme</span>
+                      </label>
+                      <label class="reference-option">
+                        <input type="checkbox" name="reference" value="Zusatz pro Soldat" />
+                        <span>Zusatz pro Soldat</span>
+                      </label>
+                      <label class="reference-option">
+                        <input type="checkbox" name="reference" value="Gewonnen" />
+                        <span>Gewonnen</span>
+                      </label>
+                      <label class="reference-option">
+                        <input type="checkbox" name="reference" value="Verloren" />
+                        <span>Verloren</span>
+                      </label>
+                    </div>
+                  </fieldset>
+                  <label>
+                    Auszahlungsbetrag pro Empfaenger
+                    <div class="money-input">
+                      <span>USD</span>
+                      <output id="amount" class="amount-output" aria-live="polite">$0.00</output>
+                    </div>
+                    <small class="calculation-detail" id="calculation-detail">Kategorie und Referenz waehlen.</small>
+                  </label>
+                  <label class="full-width">
+                    Verwendungszweck / Nachweise
+                    <textarea id="purpose" name="purpose" rows="3" maxlength="1000" placeholder="Kurze Begruendung und HTTP(S)-Links, z. B. https://beispiel.de/nachweis.png" required></textarea>
+                  </label>
+                </div>
+                <div class="form-footer">
+                  <p id="form-feedback" class="form-feedback" role="status" aria-live="polite"></p>
+                  <button class="submit-button" type="submit">
+                    <i data-lucide="send" aria-hidden="true"></i>
+                    Vorgang melden
+                  </button>
+                </div>
+              </form>
+            </article>
+
+            <aside class="operations-panel" aria-label="Auszahlungsuebersicht">
+              <div class="sector-label">AKTUELLER STAND</div>
+              <div class="metric">
+                <span>Offene Anfragen</span>
+                <strong id="pending-count">0</strong>
+              </div>
+              <div class="metric">
+                <span>Ausstehender Betrag</span>
+                <strong id="pending-total">$0.00</strong>
+              </div>
+              <div class="metric">
+                <span>Freigegeben</span>
+                <strong id="approved-count">0</strong>
+              </div>
+              <div class="ops-rule"></div>
+              <p class="ops-note">
+                <strong>data_auszahlung</strong> wird nur gelesen. Neue Vorgaenge werden in <strong>erfasst</strong> gespeichert; GOTA-Freigaben verschieben sie nach <strong>ausgezahlt</strong>.
+              </p>
+            </aside>
+          </section>
+
+          <section class="records-section" id="vorgaenge" aria-labelledby="records-heading">
+            <div class="section-heading">
+              <div>
+                <p class="panel-kicker">MELDEBUCH</p>
+                <h2 id="records-heading">Erfasste Vorgaenge</h2>
+              </div>
+              <button class="icon-button" id="refresh-records" type="button" aria-label="Vorgaenge aktualisieren" title="Vorgaenge aktualisieren">
+                <i data-lucide="refresh-cw" aria-hidden="true"></i>
+              </button>
+            </div>
+            <div class="records-table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>VORGANG</th>
+                    <th>EMPFAENGER</th>
+                    <th>ART / REFERENZ</th>
+                    <th>NACHWEISE</th>
+                    <th>BETRAG</th>
+                    <th>STATUS</th>
+                    <th class="admin-column">AKTION</th>
+                  </tr>
+                </thead>
+                <tbody id="records-body"></tbody>
+              </table>
+              <div class="empty-state" id="empty-state">
+                <i data-lucide="clipboard-list" aria-hidden="true"></i>
+                <p>Noch keine Auszahlungsanforderungen erfasst.</p>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <dialog class="auth-dialog" id="auth-dialog" aria-labelledby="auth-title">
+      <form id="auth-form" method="dialog">
+        <button class="dialog-close" id="dialog-close" type="button" aria-label="Zugangsdialog schliessen" title="Schliessen">
+          <i data-lucide="x" aria-hidden="true"></i>
+        </button>
+        <div class="auth-symbol" aria-hidden="true">
+          <i data-lucide="shield-check"></i>
+        </div>
+        <p class="panel-kicker">VERSCHLUESSELTER ZUGANG</p>
+        <h2 id="auth-title">GOTA-Autorisierung</h2>
+        <p class="auth-copy">Zur Pruefung und Freigabe von Auszahlungen ist eine Zugangskennung erforderlich.</p>
+        <label class="password-label" for="gota-password">
+          Zugangscode
+          <input id="gota-password" type="password" autocomplete="current-password" inputmode="numeric" maxlength="32" required />
+        </label>
+        <p id="auth-feedback" class="auth-feedback" role="alert"></p>
+        <button class="authorize-button" type="submit">
+          <i data-lucide="key-round" aria-hidden="true"></i>
+          Zugang pruefen
+        </button>
+      </form>
+    </dialog>
+
+    <template id="record-template">
+      <tr>
+        <td class="record-id"></td>
+        <td class="record-recipient"></td>
+        <td>
+          <span class="record-type"></span>
+          <small class="record-reference"></small>
+        </td>
+        <td class="record-evidence"></td>
+        <td class="record-amount"></td>
+        <td class="record-status"></td>
+        <td class="record-action admin-column"></td>
+      </tr>
+    </template>
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="app-config.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

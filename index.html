@@ -186,9 +186,17 @@
                 <p class="panel-kicker">MELDEBUCH</p>
                 <h2 id="records-heading">Erfasste Vorgaenge</h2>
               </div>
-              <button class="icon-button" id="refresh-records" type="button" aria-label="Vorgaenge aktualisieren" title="Vorgaenge aktualisieren">
-                <i data-lucide="refresh-cw" aria-hidden="true"></i>
-              </button>
+              <div class="records-actions">
+                <label class="records-filter" id="passport-filter-group" for="passport-filter" hidden>
+                  <span>AKTUELLE REISEPASSNUMMER</span>
+                  <select id="passport-filter">
+                    <option value="">Alle Vorgaenge</option>
+                  </select>
+                </label>
+                <button class="icon-button" id="refresh-records" type="button" aria-label="Vorgaenge aktualisieren" title="Vorgaenge aktualisieren">
+                  <i data-lucide="refresh-cw" aria-hidden="true"></i>
+                </button>
+              </div>
             </div>
             <div class="records-table-wrap">
               <table>

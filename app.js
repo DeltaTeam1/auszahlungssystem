@@ -27,6 +27,8 @@ const calculationDetail = document.querySelector("#calculation-detail");
 const dataSourceState = document.querySelector("#data-source-state");
 const dataSourceCopy = document.querySelector("#data-source-copy");
 const databaseState = document.querySelector("#database-state");
+const passportFilterGroup = document.querySelector("#passport-filter-group");
+const passportFilter = document.querySelector("#passport-filter");
 
 let isGotaAuthorized = false;
 let payoutCatalog = [];
@@ -365,10 +367,59 @@ function renderEvidence(record, evidenceCell) {
   });
 }
 
+function getCurrentPassportNumbers() {
+  const passportNumbers = new Set();
+
+  getRecords()
+    .filter((record) => record.status === "offen")
+    .forEach((record) => {
+      getRecordRecipients(record).forEach((recipient) => {
+        const passportNumber = String(recipient ?? "").trim();
+        if (passportNumber) {
+          passportNumbers.add(passportNumber);
+        }
+      });
+    });
+
+  return [...passportNumbers].sort((left, right) => left.localeCompare(right, "de"));
+}
+
+function updatePassportFilter() {
+  const currentPassportNumbers = getCurrentPassportNumbers();
+  const selectedPassportNumber = passportFilter.value;
+  const hasCurrentPassports = isGotaAuthorized && currentPassportNumbers.length > 0;
+
+  passportFilter.replaceChildren(new Option("Alle Vorgaenge", ""));
+  currentPassportNumbers.forEach((passportNumber) => {
+    passportFilter.add(new Option(passportNumber, passportNumber));
+  });
+  passportFilterGroup.hidden = !hasCurrentPassports;
+  passportFilter.disabled = !hasCurrentPassports;
+  passportFilter.value = hasCurrentPassports && currentPassportNumbers.includes(selectedPassportNumber)
+    ? selectedPassportNumber
+    : "";
+}
+
+function getVisibleRecords() {
+  const selectedPassportNumber = isGotaAuthorized ? passportFilter.value : "";
+  if (!selectedPassportNumber) {
+    return getRecords();
+  }
+
+  return getRecords().filter((record) => (
+    record.status === "offen"
+    && getRecordRecipients(record).some((recipient) => recipient === selectedPassportNumber)
+  ));
+}
+
 function renderRecords() {
-  const records = getRecords();
+  updatePassportFilter();
+  const records = getVisibleRecords();
   recordsBody.replaceChildren();
   emptyState.hidden = records.length > 0;
+  emptyState.querySelector("p").textContent = passportFilter.value
+    ? `Keine offenen Vorgaenge fuer ${passportFilter.value}.`
+    : "Noch keine Auszahlungsanforderungen erfasst.";
 
   records.forEach((record) => {
     const row = recordTemplate.content.cloneNode(true);
@@ -418,7 +469,7 @@ function renderRecords() {
     recordsBody.append(row);
   });
 
-  updateMetrics(records);
+  updateMetrics(getRecords());
   lucide.createIcons();
 }
 
@@ -543,6 +594,7 @@ recipientInput.addEventListener("keydown", (event) => {
 recipientInput.addEventListener("blur", () => addRecipients(recipientInput.value));
 paymentType.addEventListener("change", updateAmountPreview);
 document.querySelectorAll('input[name="reference"]').forEach((input) => input.addEventListener("change", updateAmountPreview));
+passportFilter.addEventListener("change", renderRecords);
 
 gotaTrigger.addEventListener("click", () => {
   if (isGotaAuthorized) {

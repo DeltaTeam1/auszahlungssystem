@@ -29,6 +29,8 @@ const dataSourceCopy = document.querySelector("#data-source-copy");
 const databaseState = document.querySelector("#database-state");
 const passportFilterGroup = document.querySelector("#passport-filter-group");
 const passportFilter = document.querySelector("#passport-filter");
+const passportTotalGroup = document.querySelector("#passport-total-group");
+const passportFilterTotal = document.querySelector("#passport-filter-total");
 
 let isGotaAuthorized = false;
 let payoutCatalog = [];
@@ -412,9 +414,23 @@ function getVisibleRecords() {
   ));
 }
 
+function updatePassportFilterTotal(visibleRecords) {
+  const selectedPassportNumber = isGotaAuthorized ? passportFilter.value : "";
+  passportTotalGroup.hidden = !selectedPassportNumber;
+
+  if (!selectedPassportNumber) {
+    passportFilterTotal.textContent = formatCurrency(0);
+    return;
+  }
+
+  const total = visibleRecords.reduce((sum, record) => sum + Number(record.amount || 0), 0);
+  passportFilterTotal.textContent = formatCurrency(total);
+}
+
 function renderRecords() {
   updatePassportFilter();
   const records = getVisibleRecords();
+  updatePassportFilterTotal(records);
   recordsBody.replaceChildren();
   emptyState.hidden = records.length > 0;
   emptyState.querySelector("p").textContent = passportFilter.value
